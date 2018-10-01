@@ -19,83 +19,95 @@ The CTO file has the following components.
   - Set of resource definitions such as Assets, Transactions, Participants and Events.
   - Optional import declarations to access resource from other namespaces.
 
-**Declarations of resources**
+### Declarations of resources**
 Resources in Hyperledger Composer include:
 
   - Assets, Participants, Transactions, and Events.
   - Enumerated Types.
   - Concepts.
 
-**Assets, Participants, Transactions, and Events.**
+### Assets, Participants, Transactions, and Events.
 A Resources has to have the following properties.
 
   - Be part of a namespace
   - Have a name
   - Have a identifying property
-    /**
-     * A vehicle asset.
-     */
-    asset Vehicle identified by vin {
-      o String vin
-    }
+```
+/**
+  * A vehicle asset.
+  */
+asset Vehicle identified by vin {
+  o String vin
+}
+```
   - Optional super-type
-    /**
-     * A car asset. A car is related to a list of parts
-     */
-    asset Car extends Vehicle {
-      o String model
-      --> Part[] Parts
-    }
+```
+  /**
+  * A car asset. A car is related to a list of parts
+  */
+asset Car extends Vehicle {
+  o String model
+  --> Part[] Parts
+}
+```
   - Optional abstract declaration
-    /**
-     * An abstract Vehicle asset.
-     */
-    abstract asset Vehicle identified by vin {
-      o String vin
-    }
+```
+  /**
+  * An abstract Vehicle asset.
+  */
+abstract asset Vehicle identified by vin {
+  o String vin
+}
+```
   - Set of named properties
   - Optional set of relationships to other Composer types
-    /**
-     * A Field asset. A Field is related to a list of animals
-     */
-    asset Field identified by fieldId {
-      o String fieldId
-      o String name
-      --> Animal[] animals
-    }
+```
+  /**
+  * A Field asset. A Field is related to a list of animals
+  */
+asset Field identified by fieldId {
+  o String fieldId
+  o String name
+  --> Animal[] animals
+}
+```
 
-******Enumerated Types**
+### Enumerated Types
 Just like enum is c++ or java, this is used to specify a type with 1 to N possible values. 
 
-    /**
-     * An enumerated type
-     */
-    enum ProductType {
-      o DAIRY
-      o BEEF
-      o VEGETABLES
-    }
+```
+  /**
+  * An enumerated type
+  */
+enum ProductType {
+  o DAIRY
+  o BEEF
+  o VEGETABLES
+}
+```
 
 Enumerated types can be used as properties of a Resource.
 
-**Concepts**
+### Concepts
 Concepts are abstract classes that are not assets, participants or transactions. They are typically contained by an asset, participant or transaction.
 Concepts can be abstract. But they do not need a identified by field since they can not be directly stored in the registry.
 
-    abstract concept Address {
-      o String street
-      o String city default ="Winchester"
-      o String country default = "UK"
-      o Integer[] counts optional
-    }
-    
-    concept UnitedStatesAddress extends Address {
-      o String zipcode
-    }
+```
+abstract concept Address {
+  o String street
+  o String city default ="Winchester"
+  o String country default = "UK"
+  o Integer[] counts optional
+}
+
+concept UnitedStatesAddress extends Address {
+  o String zipcode
+}
+```
 
 The concept like enum types can be used as a property of a Resource.
 
-**Primitive types**
+##Primitive types
 Composer resources are defined in terms of the following primitive types:
 
   - String: a UTF8 encoded String.
@@ -122,11 +134,14 @@ Is an array of relationships to the Animal type, stored in a field called 'incom
 [Read More Here](https://hyperledger.github.io/composer/latest/reference/js_scripts.html)
 Script file is the logic of composer model. 
 
-    /**
-    * A transaction processor function description
-    * @param {org.example.basic.SampleTransaction} parameter-name A human description of the parameter
-    * @transaction
-    */
+    
+```
+/**
+* A transaction processor function description
+* @param {org.example.basic.SampleTransaction} parameter-name A human description of the parameter
+* @transaction
+*/
+```
 
 Every transaction or event needs a separate function. Each function needs `@param` tag connecting to the actual resource. And `@transaction` tag denoting the function as a transaction. 
 

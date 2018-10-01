@@ -36,53 +36,58 @@ In our meetup we do two kinds of things. We have pizzas and we gain knowledge. T
 Lets work on the eat transaction first. 
 
 First we create the Pizza asset. Add the following to model file.
-
-    asset Pizza identified by id {
-        o String id  
-        o Integer amount
-    }
+```
+asset Pizza identified by id {
+    o String id  
+    o Integer amount
+}
+```
 
 We just created an asset called pizza. It will be identified by its id. It has another field called amount. 
 
 Then we create the Audience Participant. 
+```
+abstract participant Member identified by id {
+    o String id
+    o PresenceState state
+    --> Knowledge[] topics
+}
 
-    abstract participant Member identified by id {
-        o String id
-        o PresenceState state
-        --> Knowledge[] topics
-    }
-    
-    participant Audience extends Member {
-        o FullState full
-    }
+participant Audience extends Member {
+    o FullState full
+}
+```
 
 Notice the `abstract` participant. This is because the instructor and audience share a super class member. Also you can see couple of unknown types such as `PresenceState` and `FullState` . These are couple of enums. Add them toward the top of the file.
 
+```
+enum PresenceState {
+    o PRESENT
+    o ABSENT
+}
 
-    enum PresenceState {
-        o PRESENT
-        o ABSENT
-    }
-    
-    enum FullState {
-        o STARVING
-        o HUNGRY
-        o FULL
-    }
+enum FullState {
+    o STARVING
+    o HUNGRY
+    o FULL
+}
+```
 
 We also need to add `Knowledge` asset.
-
-    asset Knowledge identified by id {
-        o String id
-        o String name
-    }
+```
+asset Knowledge identified by id {
+    o String id
+    o String name
+}
+```
 
 Finally we add the eat transaction.
-
-    transaction Eat {
-        --> Audience member
-        --> Pizza food
-    }
+```
+transaction Eat {
+    --> Audience member
+    --> Pizza food
+}
+```
 
 We see the `- - >` symbol. This just denotes that `member` and `food` are relationships and not owned by the transactions.
 
@@ -99,50 +104,52 @@ Its now time to work on the logic of the transaction.
 
 
 Add the following in script.js file.
-
-    /**
-     * @param {org.meetup.ibmcode.Eat} eat - the eat transaction
-     * @transaction
-     */
+```
+/**
+* @param {org.meetup.ibmcode.Eat} eat - the eat transaction
+* @transaction
+*/
+```
 
 This format of comment needs to be there before any transaction function. This tells the Js function which resource it gets passed when it is called. Notice the namespace name. It should match your namespace name. 
 
 Right after the comments above add the function. The name of the function or the variable passed does not matter. We could call it whatever we want. But they will connect to our model via the `@param` tag. 
 
-
-    async function eat(eat) {
-      let member = eat.member;
-      
-      let willEat = 0;
-      
-      if(member.state !== 'PRESENT') {
-        throw new Error ('Not Present Members can not eat');
-      }
-     
-      
-      if (member.full === 'STARVING') {
-        willEat = 2;
-      } else if(member.full === 'HUNGRY') {
-        willEat = 1;
-      } else {
-        willEat = 0;
-      }
-      
-      
-      let food = eat.food;
-      if (food.amount < willEat) {
-        throw new Error ('Not Enough Food');
-      }
-      
-      food.amount = food.amount - willEat;
-      member.full = 'FULL';
-      
-      const foodRegistry = await getAssetRegistry('org.meetup.ibmcode.Pizza');
-      await foodRegistry.update(food);
-      
-      const memberRegistry = await getParticipantRegistry('org.meetup.ibmcode.Audience');
-      await memberRegistry.update(member);
+```
+async function eat(eat) {
+    let member = eat.member;
+    
+    let willEat = 0;
+    
+    if(member.state !== 'PRESENT') {
+    throw new Error ('Not Present Members can not eat');
     }
+    
+    
+    if (member.full === 'STARVING') {
+    willEat = 2;
+    } else if(member.full === 'HUNGRY') {
+    willEat = 1;
+    } else {
+    willEat = 0;
+    }
+    
+    
+    let food = eat.food;
+    if (food.amount < willEat) {
+    throw new Error ('Not Enough Food');
+    }
+    
+    food.amount = food.amount - willEat;
+    member.full = 'FULL';
+    
+    const foodRegistry = await getAssetRegistry('org.meetup.ibmcode.Pizza');
+    await foodRegistry.update(food);
+    
+    const memberRegistry = await getParticipantRegistry('org.meetup.ibmcode.Audience');
+    await memberRegistry.update(member);
+}
+```
 
 In the code all we are doing is checking if our audience can eat some pizza. 
 There is logic to check if they are present to the meetup also if there is enough food. After the transaction the member should be full and number of pizzas left should decrease. We update it in the end using `getAssetRegistry` and `getParticipantRegistry` 
@@ -166,11 +173,13 @@ Now that everything looks good. (No errors)
 ![](https://d2mxuefqeaa7sj.cloudfront.net/s_36A1A6882F2E629D67905CBD09A811EC3D38022D79E9284B375A8F8CCF9D7462_1538360661032_image.png)
 
 - Create a Pizza Asset
-    {
-      "$class": "org.meetup.ibmcode.Pizza",
-      "id": "1",
-      "amount": 0
-    }
+```
+{
+    "$class": "org.meetup.ibmcode.Pizza",
+    "id": "1",
+    "amount": 0
+}
+```
 - Click on submit transaction.
 ![](https://d2mxuefqeaa7sj.cloudfront.net/s_36A1A6882F2E629D67905CBD09A811EC3D38022D79E9284B375A8F8CCF9D7462_1538360763439_image.png)
 
